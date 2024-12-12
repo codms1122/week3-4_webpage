@@ -1,4 +1,4 @@
-from flask import Flask  #Flask 사용할 수 있도록 import
+from flask import Flask, render_template  #Flask 사용할 수 있도록 import
 app = Flask(__name__)  #Flask 인스턴스 생성
 
 @app.route('/') #웹페이지 경로에 접속했을 때 동작할 내용 정의 
