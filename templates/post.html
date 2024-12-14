@@ -51,6 +51,27 @@
         align-items: center;
         justify-content: space-between;
     }
+    #post_list table{
+        width: 100%;
+        max-height: 650px;
+        border-collapse: collapse; 
+        border-top: 2px solid #CD5C5C;
+        border-bottom: 2px solid #CD5C5C;
+        table-layout: fixed;
+        word-break: break-all;
+        text-align: center;
+    }
+    #post_list th, td {
+        height: 40px;
+        /* border: 1px solid #444444; */ 
+        border-bottom: 1px solid #CD5C5C;
+    }
+    #post_list thead tr {
+        border-bottom: 2px solid #CD5C5C;
+    }
+    #post_list tbody tr:hover { 
+        background-color: #F5F5F5; 
+    }
 </style>
 {% endblock %}
 
@@ -61,39 +82,40 @@
         <h1 style="margin: 0px;"><strong>지식 조각 게시판</strong></h1>
     </div>
     <div id="post_query">
-        <div id="post_query_box">
-            <select class="post_query_body" id="query_type" name="post_query_type" id="post_query_type">
+        <form id="post_query_box" action="/post" method="post">
+            <select class="post_query_body" id="query_type" name="query_type">
                 <option value="title">제목</option>
                 <option value="content">내용</option>
                 <option value="all">제목+내용</option>
             </select>
-            <input class="post_query_body" id="query_content" type="text" placeholder="검색어를 입력하세요.">
+            <input class="post_query_body" id="query_content" name="query_content" type="text" placeholder="검색어를 입력하세요.">
             <input class="post_query_body" id="query_submit" type="submit" value="검색">
-        </div>
+            <p>{{post_query}} </p>
+        </form>
     </div>
     <div id="post_cnc">
         <div id="post_count">
-            count = 192
+            count = {{ post_cnt }}
         </div>
         <div id="post_create">
             <button>글쓰기</button>
         </div>
     </div>
     <div id="post_list">
-        <table>
+        <table >
             <thead>
                 <tr>
-                    <th>번호</th>
-                    <th>제목</th>
-                    <th>작성일</th>
+                    <th style="width: 7%;" >번호</th>
+                    <th style="width: 80%;">제목</th>
+                    <th style="width: 13%;">작성일</th>
                 </tr>
             </thead>
             <tbody>
-                {% for post in post_list_data %}
+                {% for post in post_list %}
                 <tr>
-                    <td>{{ post.postId }}</td>
-                    <td>{{ post.postTitle }}</td>
-                    <td>{{ post.createdTime }}</td>
+                    <td>{{ post['postId'] }}</td>
+                    <td style="text-align: left;">{{ post['postTitle'] }}</td>
+                    <td>{{ post['createdTime'] }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
