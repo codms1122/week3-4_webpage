@@ -4,75 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <title>week3-4 webpage</title>
-    <style>
-        body{
-            background-color: lightgoldenrodyellow;
-            margin: 0px auto;
-        }
-        header{
-            background-color: aqua;
-            height: 54px;
-            margin: 0px auto;
-            
-        }
-        .inner{
-            background-color: skyblue;
-            max-width: 1110px;
-            min-width: 600px; /*800px*/
-            height: 100%;
-            margin: 0 auto;
-            padding: 0 15px;
-        }
-        #header_common{
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        main{
-            background-color: lightcoral;
-            height: 1000px;
-            margin: 20px auto;
-
-        }
-        section{
-            background-color: lightsalmon;
-        }
-        article{
-            background-color: yellowgreen;
-        }
-
-        footer{
-            background-color: #f6f6f6;
-            height: 80px;
-        }
-        #footer_common{
-            height: 100%;
-            display: flex; 
-            flex-direction: column; /* 세로 방향 정렬 */
-            justify-content: center; /* 부모 높이 내에서 수직 정렬 */
-            align-items: center; /* 가로 정렬 */
-            text-align: center;
-            color: #454545;
-        }
-
-        div{
-            background-color: violet;
-        }
-        span{
-            background-color: yellow;
-        }
-        p{
-            /*background-color: greenyellow;*/
-        }
-    </style>
+    <link rel="stylesheet" href=" {{ url_for('static', filename='css/layout.css') }}">
+    {% block head %}{% endblock %}
 </head>
 
 
 <body>
    
     <header>
-        <div class="inner" id="header_common">
+        <div class="inner" id="header_content">
             <div id="header_left">
                 <h2 style="margin: 0px;">지식 조각</h2>
             </div>
@@ -85,14 +25,12 @@
     
     <main>
         <div class="inner">
-            <section>
-                d
-            </section>
+            {% block content %}{% endblock %}
         </div>
     </main>
 
     <footer>
-        <div class="inner" id="footer_common">
+        <div class="inner" id="footer_content">
             <p style="margin: 10px 0px 0px;" ><strong>지식조각</strong></p>
             <p style="margin-top: 2px; font-size: 0.7em;">지식의 조각을 모으는 공간</p>
         </div>
