@@ -20,7 +20,7 @@ def get_db_connection():
 
 
 # 임시 데이터 저장
-sql_select = []
+#sql_select = []
 #posts_cnt = []
 
 
@@ -30,34 +30,35 @@ def post_list():
     connection = get_db_connection()
     cursor = connection.cursor(dictionary=True)  # dictionary로 결과 반환하도록
 
+
     #검색조건(post_query) 받아오기
-    query_type = request.form.get('query_type') 
+    query_type = request.form.get('query_type')
     query_content = request.form.get('query_content')
-
-    if query_content:
-        if query_type=="title":
-            sql = 'SELECT postId, postTitle, DATE(createdTime) AS createdTime FROM testpost WHERE postTitle LIKE "' + query_content + '"'
-            
-    else:
-        print("검색어 없음")
-
-    #전체 리스트 조회
-    sql='select postId, postTitle, date(createdTime) AS createdTime from testpost' ##### ❗❗❗❗ DB명 변경 ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
-    cursor.execute(sql)  # testpost 테이블의 모든 데이터 가져오기
-    sql_select = cursor.fetchall()  # posts 리스트에 데이터 담기
-
-    #개수세기
-    sql='select count(*) AS count from testpost' ### ❗❗❗❗ DB명 변경 ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
-    cursor.execute(sql)
-    sql_count = cursor.fetchall()
-    sql_count = sql_count[0]['count']
     
+
+    #검색조건에 맞게 sql질의
+    if query_content:     ## ❗❗❗❗ DB명 변경 ⭐⭐⭐⭐ 4개 다 바꿔 ⭐⭐⭐⭐
+        if query_type=="title":
+            sql = 'SELECT postId, postTitle, DATE(createdTime) AS createdTime FROM testpost WHERE postTitle LIKE "%' + query_content + '%"'
+        elif query_type=="content":
+            sql = 'SELECT postId, postTitle, DATE(createdTime) AS createdTime FROM testpost WHERE postContent LIKE "%' + query_content + '%"'
+        else:
+            sql = 'SELECT postId, postTitle, DATE(createdTime) AS createdTime FROM testpost WHERE postTitle LIKE "%' + query_content + '%" or postContent LIKE "%' + query_content + '%"'
+    else:
+        sql='select postId, postTitle, date(createdTime) AS createdTime from testpost' ##### ❗❗❗❗ DB명 변경 ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
+    
+    #sql질의 결과 담기
+    cursor.execute(sql)  
+    sql_select = cursor.fetchall()  #리스트에 데이터 담기, 한 리스트요소 = 딕셔너리
+    sql_count = len(sql_select)
+
+
     
     # DB 연결 종료
     cursor.close()
     connection.close()  
 
-
+    #테스트로그 ⭐지우기⭐
     print("========================\n")
     print("log!! \n")
     print("Fetched posts data from DB:")
@@ -68,7 +69,7 @@ def post_list():
     print("\n========================")
 
 
-    return render_template('post.html', post_cnt=sql_count, post_list=sql_select)  # HTML 템플릿에 데이터 전달  
+    return render_template('post.html', post_cnt=sql_count, post_list=sql_select, query_type=query_type, query_content=query_content)  # HTML 템플릿에 데이터 전달  
 
 
 
