@@ -18,12 +18,6 @@ def get_db_connection():
     return connection
 
 
-
-# 임시 데이터 저장
-#sql_select = []
-#posts_cnt = []
-
-
 @app.route('/post', methods=['GET', 'POST'])
 def post():
     #DB연결
@@ -37,7 +31,7 @@ def post():
     
 
     #검색조건에 맞게 sql질의
-    if query_content:     ## ❗❗❗❗ DB명 변경 ⭐⭐⭐⭐ 4개 다 바꿔 ⭐⭐⭐⭐
+    if query_content:    
         if query_type=="title":
             sql = 'SELECT postId, postTitle, DATE(createdTime) AS createdTime FROM testpost WHERE postTitle LIKE "%' + query_content + '%"'
         elif query_type=="content":
@@ -45,7 +39,7 @@ def post():
         else:
             sql = 'SELECT postId, postTitle, DATE(createdTime) AS createdTime FROM testpost WHERE postTitle LIKE "%' + query_content + '%" or postContent LIKE "%' + query_content + '%"'
     else:
-        sql='select postId, postTitle, date(createdTime) AS createdTime from testpost' ##### ❗❗❗❗ DB명 변경 ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
+        sql='select postId, postTitle, date(createdTime) AS createdTime from testpost'
     
     #sql질의 결과 담기
     cursor.execute(sql)  
@@ -53,20 +47,9 @@ def post():
     sql_count = len(sql_select)
 
 
-    
     # DB 연결 종료
     cursor.close()
     connection.close()  
-
-    #테스트로그 ⭐지우기⭐
-    print("========================\n")
-    print("log!! \n")
-    print("Fetched posts data from DB:")
-    print(sql)
-    print(sql_select)
-    print(sql_count)  
-    print(query_type,query_content)
-    print("\n========================")
 
     return render_template('post.html', post_cnt=sql_count, post_list=sql_select, query_type=query_type, query_content=query_content)  # HTML 템플릿에 데이터 전달  
 
@@ -77,22 +60,11 @@ def post_detail(post_id):
     connection = get_db_connection()
     cursor = connection.cursor(dictionary=True)
 
-    """ sql = (
-        'SELECT postId, postTitle, postContent, createdTime, lastModifiedTime'
-        'FROM testpost WHERE postId = ' + str(post_id)
-    ) """
     sql = ('SELECT postId, postTitle, postContent, createdTime, lastModifiedTime '
            'FROM testpost WHERE postId = ' + str(post_id))
     cursor.execute(sql)  
     sql_select = cursor.fetchall()
     sql_select = sql_select[0]
-
-    #테스트로그 ⭐지우기⭐
-    print("========================\n")
-    print("log!! \n")
-    print(sql)
-    print(sql_select)
-    print("\n========================")
 
     return render_template('post_detail.html', post=sql_select)
     
@@ -125,13 +97,6 @@ def post_create():
     # DB 연결 종료
     cursor.close()
     connection.close()  
-
-    #테스트로그 ⭐지우기⭐
-    print("========================\n")
-    print("log!! \n")
-    print(create_title)
-    print(create_content)
-    print("\n========================")
 
     return render_template('post_create.html')
 
@@ -169,6 +134,11 @@ def post_update(post_id):
         else:
             errormsg="emptyFound"
             return render_template('post_update.html', post=sql_select, errormsg=errormsg)
+        
+
+    # DB 연결 종료
+    cursor.close()
+    connection.close()  
 
     return render_template('post_update.html', post=sql_select)
 
@@ -177,25 +147,30 @@ def post_update(post_id):
 
 
 
-@app.route('/post/delete<int:post_id>')
+@app.route('/post/delete/<int:post_id>', methods=['GET', 'POST'])
 def post_delete(post_id):
     #DB연결
     connection = get_db_connection()
     cursor = connection.cursor(dictionary=True)
 
-    sql = 'SELECT postId, postTitle, postContent, DATE(createdTime) AS createdTime FROM testpost WHERE postId = ' + str(post_id)
-    cursor.execute(sql)  
-    sql_select = cursor.fetchall()
-    sql_select = sql_select[0]
+    state = "delete_check"    
 
-    #테스트로그 ⭐지우기⭐
-    print("========================\n")
-    print("log!! \n")
-    print(sql)
-    print(sql_select)
-    print("\n========================")
+    if request.method == 'POST':
+        delete_yn = request.form.get('delete_yn')
+        print(delete_yn)
+        if delete_yn == "yes":
+            state = "delete"
+            sql = 'DELETE FROM testpost WHERE postId = ' + str(post_id)
+            cursor.execute(sql)  
+            connection.commit()
+            return render_template('next.html',state=state)
 
-    return render_template('post_detail.html', post_detail=sql_select)
+
+    # DB 연결 종료
+    cursor.close()
+    connection.close()  
+
+    return render_template('next.html', state=state, post_id=post_id)
 
 
 

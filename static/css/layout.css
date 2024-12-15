@@ -1,5 +1,4 @@
 body{
-    background-color: lightgoldenrodyellow;
     margin: 0px auto;
 }
 header{
@@ -15,9 +14,6 @@ header{
     margin: 0 auto;
     padding: 0 15px;
 }
-main .inner{
-    background-color: skyblue;
-}
 #header_content{
     display: flex;
     align-items: center;
@@ -28,18 +24,10 @@ main .inner{
 }
 
 main{
-    background-color: lightcoral;
     height: 1000px;
     margin: 20px auto;
 
 }
-section{
-    background-color: lightsalmon;
-}
-article{
-    background-color: yellowgreen;
-}
-
 footer{
     background-color: #f6f6f6;
     height: 80px;
@@ -52,11 +40,4 @@ footer{
     align-items: center; /* 가로 정렬 */
     text-align: center;
     color: #454545;
-}
-
-main div{
-    background-color: violet;
-}
-span{
-    background-color: yellow;
 }

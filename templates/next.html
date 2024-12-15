@@ -48,11 +48,32 @@
     {% if state == "update" %}
     <p style="font-size: 30px;">수정이 완료되었습니다</p>
     <div id="goto">
-        <form id="post_create_btn" action="{{ url_for('post') }}">
+        <form id="post_update_btn" action="{{ url_for('post') }}">
             <button type="submit">게시판 홈으로</button>
         </form>
-        <form id="post_create_btn" action="{{ url_for('post_create') }}">
+        <form id="post_update_btn" action="{{ url_for('post_create') }}">
             <button type="submit">추가 새 글 작성</button>
+        </form>
+    </div>
+    {% endif %}
+
+    {% if state == "delete" %}
+    <p style="font-size: 30px;">삭제가 완료되었습니다</p>
+    <div id="goto">
+        <form id="post_update_btn" action="{{ url_for('post') }}">
+            <button type="submit">게시판 홈으로</button>
+        </form>
+    </div>
+    {% endif %}
+
+    {% if state == "delete_check" %}
+    <p style="font-size: 30px;">정말 삭제하시겠습니까?</p>
+    <div id="goto">
+        <form id="post_deleteN_btn" action="{{ url_for('post') }}">
+            <button type="submit">아니요 (홈으로)</button>
+        </form>
+        <form id="post_deleteY_btn" action="{{ url_for('post_delete', post_id=post_id) }}" method="post">
+            <button type="submit" name="delete_yn" value="yes">예</button>
         </form>
     </div>
     {% endif %}
