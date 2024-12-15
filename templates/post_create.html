@@ -1,0 +1,98 @@
+{% extends 'layout.html' %}
+
+
+{% block head %}
+<style>
+    #main_content{
+        background-color: #ffffff;
+        width: 100%;
+    }
+    a{
+        text-decoration: none;
+        color: #353535;
+    }
+    #create_form{
+        width: 100%;
+        margin: 20px 0px 0px;
+    }
+    #create_nnp{
+        padding: 20px 0px 10px;
+        border-bottom: 2px solid #033468;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    #create_name{
+        color: #033468;
+    }
+    #create_write{
+        background-color: #ffffff;
+        height: 850px;
+        margin: 10px 0px 10px;
+        border-radius: 10px; 
+        border: 1.2px solid #eff1f3;
+    }
+    #create_write_box {
+        background-color: #ffffff;
+        width: 98%;
+        margin: 10px;
+    }
+    #create_write_box input {
+        display: block;
+        width: 98%;
+        height: 50px;
+        border: 0px;
+        margin: 0px auto;
+        padding: 5px 10px;
+        font-size: 22px;
+    }
+    #create_write_box hr {
+        border: 1px solid #eff1f3;
+    }
+    #create_write_box textarea {
+        display: block;
+        width: 98%;
+        height: 700px;
+        border: 0px;
+        margin: 0px auto;
+        padding: 10px;
+        font-size: 16px;
+        resize: none;
+
+    }
+    
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div id="main_content">
+
+    <div id="path">
+        <a href="{{ url_for('post') }}">지식조각 게시판</a>
+    </div>
+
+    <form action="{{ url_for('post_create') }}" method="post" id="create_form">
+        <div id="create_nnp">
+            <div id="create_name">
+                <p style="margin: 0px; font-size: 28px;"><strong>글쓰기</strong></p>
+            </div>
+            <div id="create_publish_btn">
+                <button type="submit">발행하기</button>
+            </div>
+        </div>
+        <div id="create_write">
+            <div id="create_write_box">
+                <input id="create_title" name="create_title" type="text" placeholder="제목을 입력하세요" required>
+                <hr>
+                <textarea id="create_content" name="create_content" placeholder="내용을 입력하세요"  required></textarea>
+            </div>
+        </div>
+    </form>
+
+    {% if errormsg == "emptyFound" %}
+    <script>alert("제목과 내용은 필수 입력입니다.")</script>
+    {% endif %}
+
+</div>
+{% endblock %}

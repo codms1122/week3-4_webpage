@@ -25,10 +25,10 @@ def get_db_connection():
 
 
 @app.route('/post', methods=['GET', 'POST'])
-def post_list():
+def post():
     #DB연결
     connection = get_db_connection()
-    cursor = connection.cursor(dictionary=True)  # dictionary로 결과 반환하도록
+    cursor = connection.cursor(dictionary=True) 
 
 
     #검색조건(post_query) 받아오기
@@ -71,6 +71,48 @@ def post_list():
 
     return render_template('post.html', post_cnt=sql_count, post_list=sql_select, query_type=query_type, query_content=query_content)  # HTML 템플릿에 데이터 전달  
 
+
+
+@app.route('/post/create', methods=['GET', 'POST'])
+def post_create():
+    #DB연결
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    # 작성 글 내용 받아오기
+    create_title = request.form.get('create_title')
+    create_content = request.form.get('create_content')
+
+    
+
+    if request.method == 'POST':
+        if create_title and create_content:
+            sql = 'INSERT INTO testpost (postTitle, postContent) VALUES ("' + create_title + '", "' + create_content + '");'
+            cursor.execute(sql)
+            connection.commit()
+            return render_template('post_create_done.html')
+        else:
+            errormsg="emptyFound"
+            return render_template('post_create.html',errormsg=errormsg)
+
+
+    # DB 연결 종료
+    cursor.close()
+    connection.close()  
+
+    #테스트로그 ⭐지우기⭐
+    print("========================\n")
+    print("log!! \n")
+    print(create_title)
+    print(create_content)
+    """ print(f"error msg : ",{errormsg}) """
+    print("\n========================")
+
+    return render_template('post_create.html')
+
+@app.route('/post/create/done')
+def post_create_done():
+    return render_template('post_create_done.html')
 
 
 

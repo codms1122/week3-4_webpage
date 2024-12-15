@@ -22,8 +22,8 @@
     #post_query_box{
         background-color: tan;
         height: 100px;
-        background-color: #f0f0f0; /*바탕색*/
-        border-radius: 5px; /*모서리 둥글게*/
+        background-color: #eff1f3; /*바탕색*/
+        border-radius: 10px; /*모서리 둥글게*/
         display: flex;
         align-items: center;
         justify-content: center;
@@ -43,9 +43,16 @@
     #query_submit{
         width: 70px;
         height: 34px;
+        border: 0px;
+        border-radius: 5px;
+        background-color: #033468;
+        color: #ffffff;
+    }
+    #query_submit:hover {
+        background-color: #02162c;
     }
     #post_cnc{
-        height: 60px;
+        height: 40px;
         padding: 0px 5px 0px 0px;
         display: flex;
         align-items: center;
@@ -54,12 +61,25 @@
     #post_count{
         color: #999999;
     }
+    #post_create_btn button{
+        width: 70px;
+        height: 30px;
+        text-align: center;
+        border: 0px;
+        border-radius: 5px;
+        background-color: #033468;
+        color: #ffffff;
+    }
+    #post_create_btn button:hover {
+        background-color: #02162c;
+    }
     #post_list table{
         width: 100%;
         max-height: 640px;
         border-collapse: collapse; 
         border-top: 2px solid #CD5C5C;
         border-bottom: 2px solid #CD5C5C;
+        background-color: #ffffff;
         table-layout: fixed;
         word-break: break-all;
         text-align: center;
@@ -97,14 +117,17 @@
     </div>
     <div id="post_cnc">
         <div id="post_count">
-            <p style="margin: 0px;">총 {{ post_cnt }}개의 글이 있습니다.</p> 
+            <p style="margin: 0px;">총 {{ post_cnt }}개의 글이 있습니다</p> 
         </div>
-        <div id="post_create">
-            <button>글쓰기</button>
-        </div>
+        <form id="post_create_btn" action="{{ url_for('post_create') }}">
+            <button type="submit">글쓰기</button>
+        </form>
+        <!-- <div id="post_create_btn">
+            <a href="{{ url_for('post_create') }}">글쓰기</a>
+        </div> -->
     </div>
     <div id="post_list">
-        <table >
+        <table>
             <thead>
                 <tr>
                     <th style="width: 7%;" >번호</th>
@@ -120,6 +143,14 @@
                     <td>{{ post['createdTime'] }}</td>
                 </tr>
                 {% endfor %}
+
+                {% if post_cnt == 0 %}
+                    {% if query_content %}
+                    <tr> <td colspan="3">검색된 게시글이 없습니다</td> </tr>
+                    {% else %}
+                    <tr> <td colspan="3">작성된 게시글이 없습니다</td> </tr>
+                    {% endif %}
+                {% endif %}
             </tbody>
         </table>
     </div>

@@ -3,23 +3,28 @@ body{
     margin: 0px auto;
 }
 header{
-    background-color: aqua;
+    background-color: #033468;
     height: 54px;
     margin: 0px auto;
     
 }
 .inner{
-    background-color: skyblue;
     max-width: 1110px;
-    min-width: 600px; /*800px*/
+    min-width: 950px; /*800px*/
     height: 100%;
     margin: 0 auto;
     padding: 0 15px;
+}
+main .inner{
+    background-color: skyblue;
 }
 #header_content{
     display: flex;
     align-items: center;
     justify-content: space-between;
+}
+#header_left{
+    color: #ffffff;
 }
 
 main{
@@ -49,12 +54,9 @@ footer{
     color: #454545;
 }
 
-div{
+main div{
     background-color: violet;
 }
 span{
     background-color: yellow;
-}
-p{
-    /*background-color: greenyellow;*/
 }
