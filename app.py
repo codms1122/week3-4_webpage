@@ -68,10 +68,34 @@ def post():
     print(query_type,query_content)
     print("\n========================")
 
-
     return render_template('post.html', post_cnt=sql_count, post_list=sql_select, query_type=query_type, query_content=query_content)  # HTML 템플릿에 데이터 전달  
 
 
+@app.route('/post/<int:post_id>')
+def post_detail(post_id):
+    #DB연결
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    """ sql = (
+        'SELECT postId, postTitle, postContent, createdTime, lastModifiedTime'
+        'FROM testpost WHERE postId = ' + str(post_id)
+    ) """
+    sql = ('SELECT postId, postTitle, postContent, createdTime, lastModifiedTime '
+           'FROM testpost WHERE postId = ' + str(post_id))
+    cursor.execute(sql)  
+    sql_select = cursor.fetchall()
+    sql_select = sql_select[0]
+
+    #테스트로그 ⭐지우기⭐
+    print("========================\n")
+    print("log!! \n")
+    print(sql)
+    print(sql_select)
+    print("\n========================")
+
+    return render_template('post_detail.html', post=sql_select)
+    
 
 @app.route('/post/create', methods=['GET', 'POST'])
 def post_create():
@@ -83,14 +107,16 @@ def post_create():
     create_title = request.form.get('create_title')
     create_content = request.form.get('create_content')
 
-    
-
     if request.method == 'POST':
         if create_title and create_content:
-            sql = 'INSERT INTO testpost (postTitle, postContent) VALUES ("' + create_title + '", "' + create_content + '");'
+            state = "create"
+            sql = (
+                'INSERT INTO testpost (postTitle, postContent) '
+                'VALUES ("' + create_title + '", "' + create_content + '");'
+            )
             cursor.execute(sql)
             connection.commit()
-            return render_template('post_create_done.html')
+            return render_template('next.html',state=state)
         else:
             errormsg="emptyFound"
             return render_template('post_create.html',errormsg=errormsg)
@@ -105,14 +131,74 @@ def post_create():
     print("log!! \n")
     print(create_title)
     print(create_content)
-    """ print(f"error msg : ",{errormsg}) """
     print("\n========================")
 
     return render_template('post_create.html')
 
-@app.route('/post/create/done')
-def post_create_done():
-    return render_template('post_create_done.html')
+
+
+
+
+
+
+@app.route('/post/update/<int:post_id>', methods=['GET', 'POST'])
+def post_update(post_id):
+    #DB연결
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    sql = ('SELECT postId, postTitle, postContent, createdTime, lastModifiedTime '
+           'FROM testpost WHERE postId = ' + str(post_id))
+    cursor.execute(sql)  
+    sql_select = cursor.fetchall()
+    sql_select = sql_select[0]
+
+
+    update_title = request.form.get('update_title')
+    update_content = request.form.get('update_content')
+
+    if request.method == 'POST':
+        if update_title and update_content:
+            state = "update"
+            sql = ('UPDATE testpost '
+                   'SET postTitle = "'+ update_title +'", postContent = "'+ update_content +'", lastModifiedTime = NOW() '
+                   'WHERE postId = ' + str(post_id))
+            cursor.execute(sql)
+            connection.commit()
+            return render_template('next.html',state=state)
+        else:
+            errormsg="emptyFound"
+            return render_template('post_update.html', post=sql_select, errormsg=errormsg)
+
+    return render_template('post_update.html', post=sql_select)
+
+
+
+
+
+
+@app.route('/post/delete<int:post_id>')
+def post_delete(post_id):
+    #DB연결
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    sql = 'SELECT postId, postTitle, postContent, DATE(createdTime) AS createdTime FROM testpost WHERE postId = ' + str(post_id)
+    cursor.execute(sql)  
+    sql_select = cursor.fetchall()
+    sql_select = sql_select[0]
+
+    #테스트로그 ⭐지우기⭐
+    print("========================\n")
+    print("log!! \n")
+    print(sql)
+    print(sql_select)
+    print("\n========================")
+
+    return render_template('post_detail.html', post_detail=sql_select)
+
+
+
 
 
 

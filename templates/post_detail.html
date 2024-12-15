@@ -1,0 +1,85 @@
+{% extends 'layout.html' %}
+
+
+{% block head %}
+<style>
+    #main_content{
+        background-color: #ffffff;
+        width: 100%;
+    }
+    a{
+        text-decoration: none;
+        color: #353535;
+    }
+    #create_form{
+        width: 100%;
+        margin: 20px 0px 0px;
+    }
+    #detail_tnc{
+        padding: 20px 10px 10px;
+        border-bottom: 2px solid #033468;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+    }
+    #detail_title{
+        color: #033468;
+    }
+    #detail_control_btn button{
+        width: 70px;
+        height: 30px;
+        text-align: center;
+        border: 0px;
+        border-radius: 5px;
+        background-color: #033468;
+        color: #ffffff;
+    }
+    #detail_control_btn button:hover {
+        background-color: #02162c;
+    }
+    #detail_content{
+        background-color: #ffffff;
+        height: 850px;
+        padding: 0px 10px;
+        font-size: 16px;
+    }
+    #detail_content hr {
+        border: 1px solid #eff1f3;
+    }
+
+    
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div id="main_content">
+
+    <div id="path">
+        <a href="{{ url_for('post') }}">지식조각 게시판</a>
+    </div>
+
+    <div id="detail_tnc">
+        <div id="detail_title">
+            <p style="margin: 0px; font-size: 28px;"><strong>{{post['postTitle']}}</strong></p>
+        </div>
+        <div id="detail_control_btn">
+            <button onclick="location.href='{{ url_for('post_update', post_id=post['postId']) }}'">
+                수정하기
+            </button>
+            <button onclick="location.href='{{ url_for('post_delete', post_id=post['postId']) }}'">
+                삭제하기
+            </button>
+                        
+        </div>
+    </div>
+    <div id="detail_content">
+        <p style="font-size: 12px; color: #6a6b6b;">
+            작성일시 : {{post['createdTime']}}  |  수정일시 : {{post['lastModifiedTime']}}
+        </p>
+        <hr>
+        <p>{{post['postContent']}}</p>
+    </div>
+
+</div>
+{% endblock %}

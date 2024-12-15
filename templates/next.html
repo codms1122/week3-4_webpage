@@ -14,7 +14,7 @@
         align-items: center;
         justify-content: center;
     }
-    #goto button {
+    button {
         width: 170px;
         height: 30px;
         margin: 0px 5px;
@@ -23,7 +23,7 @@
         background-color: #033468;
         color: #ffffff;
     }
-    #goto button:hover {
+    button:hover {
         background-color: #02162c;
     }
 </style>
@@ -32,6 +32,8 @@
 
 {% block content %}
 <div id="main_content">
+
+    {% if state == "create" %}
     <p style="font-size: 30px;">작성이 완료되었습니다</p>
     <div id="goto">
         <form id="post_create_btn" action="{{ url_for('post') }}">
@@ -41,5 +43,19 @@
             <button type="submit">추가 새 글 작성</button>
         </form>
     </div>
+    {% endif %}
+
+    {% if state == "update" %}
+    <p style="font-size: 30px;">수정이 완료되었습니다</p>
+    <div id="goto">
+        <form id="post_create_btn" action="{{ url_for('post') }}">
+            <button type="submit">게시판 홈으로</button>
+        </form>
+        <form id="post_create_btn" action="{{ url_for('post_create') }}">
+            <button type="submit">추가 새 글 작성</button>
+        </form>
+    </div>
+    {% endif %}
+
 </div>
 {% endblock %}

@@ -1,0 +1,98 @@
+{% extends 'layout.html' %}
+
+
+{% block head %}
+<style>
+    #main_content{
+        background-color: #ffffff;
+        width: 100%;
+    }
+    a{
+        text-decoration: none;
+        color: #353535;
+    }
+    #update_form{
+        width: 100%;
+        margin: 20px 0px 0px;
+    }
+    #update_nnp{
+        padding: 20px 0px 10px;
+        border-bottom: 2px solid #033468;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    #update_name{
+        color: #033468;
+    }
+    #update_write{
+        background-color: #ffffff;
+        height: 850px;
+        margin: 10px 0px 10px;
+        border-radius: 10px; 
+        border: 1.2px solid #eff1f3;
+    }
+    #update_write_box {
+        background-color: #ffffff;
+        width: 98%;
+        margin: 10px;
+    }
+    #update_write_box input {
+        display: block;
+        width: 98%;
+        height: 50px;
+        border: 0px;
+        margin: 0px auto;
+        padding: 5px 10px;
+        font-size: 22px;
+    }
+    #update_write_box hr {
+        border: 1px solid #eff1f3;
+    }
+    #update_write_box textarea {
+        display: block;
+        width: 98%;
+        height: 700px;
+        border: 0px;
+        margin: 0px auto;
+        padding: 10px;
+        font-size: 16px;
+        resize: none;
+
+    }
+    
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div id="main_content">
+
+    <div id="path">
+        <a href="{{ url_for('post') }}">지식조각 게시판</a>
+    </div>
+
+    <form action="{{ url_for('post_update', post_id=post['postId']) }}" method="post" id="update_form">
+        <div id="update_nnp">
+            <div id="update_name">
+                <p style="margin: 0px; font-size: 28px;"><strong>글 수정하기</strong></p>
+            </div>
+            <div id="update_publish_btn">
+                <button type="submit">수정하기</button>
+            </div>
+        </div>
+        <div id="update_write">
+            <div id="update_write_box">
+                <input id="update_title" name="update_title" type="text" placeholder="제목을 입력하세요" value="{{post['postTitle']}}" required>
+                <hr>
+                <textarea id="update_content" name="update_content" placeholder="내용을 입력하세요" required>{{post['postContent']}}</textarea>
+            </div>
+        </div>
+    </form>
+
+    {% if errormsg == "emptyFound" %}
+    <script>alert("제목과 내용은 필수 입력입니다.")</script>
+    {% endif %}
+
+</div>
+{% endblock %}

@@ -77,8 +77,8 @@
         width: 100%;
         max-height: 640px;
         border-collapse: collapse; 
-        border-top: 2px solid #CD5C5C;
-        border-bottom: 2px solid #CD5C5C;
+        border-top: 2px solid #033468;
+        border-bottom: 2px solid #033468;
         background-color: #ffffff;
         table-layout: fixed;
         word-break: break-all;
@@ -87,10 +87,10 @@
     #post_list th, td {
         height: 40px;
         /* border: 1px solid #444444; */ 
-        border-bottom: 1px solid #CD5C5C;
+        border-bottom: 1px solid #eff1f3;
     }
     #post_list thead tr {
-        border-bottom: 2px solid #CD5C5C;
+        border-bottom: 2px solid #eff1f3;
     }
     #post_list tbody tr:hover { 
         background-color: #F5F5F5; 
@@ -122,9 +122,6 @@
         <form id="post_create_btn" action="{{ url_for('post_create') }}">
             <button type="submit">글쓰기</button>
         </form>
-        <!-- <div id="post_create_btn">
-            <a href="{{ url_for('post_create') }}">글쓰기</a>
-        </div> -->
     </div>
     <div id="post_list">
         <table>
@@ -137,7 +134,7 @@
             </thead>
             <tbody>
                 {% for post in post_list %}
-                <tr>
+                <tr onclick="location.href='{{ url_for('post_detail', post_id=post['postId']) }}'">
                     <td>{{ post['postId'] }}</td>
                     <td style="text-align: left;">{{ post['postTitle'] }}</td>
                     <td>{{ post['createdTime'] }}</td>
