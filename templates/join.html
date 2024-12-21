@@ -1,0 +1,185 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+<style>
+    #main_content {
+        text-align: center;
+    }
+    #join_name {
+        text-align: center;
+        margin: 70px auto 40px;
+    }
+    #join_box {
+        background-color: #fff;
+        width: 40%;
+        height: 570px;
+        margin: 0px auto;
+        padding: 40px 20px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 7px 0px #9a9a9a;
+    }
+    #join_box form {
+        align-items: center;
+    }
+    #join_input {
+        margin: 20px auto;
+    }
+    .join_input_s {
+        width: 90%;
+        height: 40px;
+        margin: 3px auto;
+        padding: 0px 5px;
+        text-align: left;
+        border: 0px;
+        border-bottom: 1px solid #9a9a9a;
+        font-size: 16px;
+    }
+    #join_input_id {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    #user_id {
+        width: 75%;
+        height: 30px;
+        border: 0px;
+        font-size: 16px;
+    }
+    #user_id_chk {
+        height: 30px;
+        background-color: #fff;
+        border: 1px solid #cecece;
+        border-radius: 15px;
+        color: #000;
+        font-size: 14px;
+    }
+    #join_submit {
+        margin: 0px auto;
+        padding: 20px 0px;
+    }
+    #join_submit button {
+        width: 90%;
+        height: 40px;
+        margin: 0px auto;
+        text-align: center;
+        border: 0px;
+        border-radius: 5px;
+        background-color: #033468;
+        color: #ffffff;
+        font-size: 16px;
+    }
+    #join_submit button:hover {
+        background-color: #02162c;
+    }
+</style>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div id="main_content">
+    <div id="join_name">
+        <h1>회원가입</h1>
+    </div>
+    <div id="join_box">
+        <form action="{{ url_for('join') }}" method="post" onsubmit="return func_submit_chk()">
+            <div id="join_input">
+                <div class="join_input_s" id="join_input_id">
+                    <input id="user_id" type="text" name="user_id" placeholder="아이디" required>
+                    <button id="user_id_chk" type="button" name="btn_action" value="id_chk" onclick="func_user_id_chk()">
+                        &nbsp;중복 확인&nbsp;
+                    </button>
+                </div>
+                <p id="id_msg" style="width: 90%; margin: 3px auto; text-align: left; font-size: 12px;"></p>
+                <p><input class="join_input_s" type="email" name="user_email" placeholder="이메일" required></p>
+                <p><input class="join_input_s" type="text" name="user_name" placeholder="이름" required></p>
+                <p><input class="join_input_s" type="password" id="user_pw" name="user_pw" placeholder="비밀번호" required></p>
+                <p style="margin-bottom: 0px;"><input class="join_input_s" type="password" id="user_pw_chk" name="user_pw_chk" placeholder="비밀번호 확인" required></p>
+                <p id="pw_msg" style="width: 90%; margin: 3px auto; text-align: left; font-size: 12px;"></p>
+                <p><input class="join_input_s" type="text" name="user_orgn" placeholder="소속" required></p>
+                <p><input class="join_input_s" type="text" name="user_major" placeholder="전공" required></p>
+            </div>
+            <div id="join_submit">
+                <button type="submit" name="btn_action" value="submit"><strong>회원가입</strong></button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    let is_id_chked = "not_chked"
+    // 아이디 중복 확인
+    function func_user_id_chk() {
+        let user_id = document.getElementById('user_id').value;
+        let id_msg = document.getElementById('id_msg');
+
+        // 아이디가 비어있지 않은지 확인
+        if (!user_id) {
+            id_msg.style.color = 'red';
+            id_msg.textContent = '아이디를 입력해주세요.';
+            return;
+        }
+
+        // jQuery AJAX로 서버에 요청
+        $.ajax({
+            url: '/id_chk',
+            type: 'POST',
+            data: { user_id: user_id }, 
+            success: function(response) {
+                if (response.id_chk == "not_exists") {
+                    id_msg.style.color = 'green';
+                    id_msg.textContent = response["id_msg"];
+                    is_id_chked = "chked"
+                } else {
+                    id_msg.style.color = 'red';
+                    id_msg.textContent = response["id_msg"];
+                }
+            }
+        });
+    }
+
+    // 비밀번호 확인
+    function func_user_pw_chk() {
+        let user_pw = document.getElementById('user_pw').value;
+        let user_pw_chk = document.getElementById('user_pw_chk').value;
+        let pw_msg = document.getElementById('pw_msg');
+
+        if (user_pw === user_pw_chk) {
+            pw_msg.style.color = 'green';
+            pw_msg.textContent = '비밀번호가 일치합니다.';
+        } else {
+            pw_msg.style.color = 'red';
+            pw_msg.textContent = '비밀번호가 일치하지 않습니다.';
+        }
+    }
+
+    // DOMContentLoaded 이벤트로 비밀번호 확인 함수 연결
+    document.addEventListener("DOMContentLoaded", function () {
+        // ID가 있는지 꼭 확인하고 나서 이벤트 추가
+        let user_pw = document.getElementById('user_pw');
+        let user_pw_chk = document.getElementById('user_pw_chk');
+        
+        if (user_pw && user_pw_chk) {
+            user_pw.addEventListener('input', func_user_pw_chk);
+            user_pw_chk.addEventListener('input', func_user_pw_chk);
+        } 
+    });
+
+    //아이디 중복 확인했는지 체크
+    function func_submit_chk() {
+        let id_msg = document.getElementById("id_msg");
+        let join_input_id = document.getElementById("join_input_id");
+
+        if (is_id_chked !== "chked") {
+            id_msg.style.color = "red";
+            id_msg.textContent = "아이디 중복 확인이 필요합니다.";
+            join_input_id.style.outline = "2px solid red";
+            return false; // 폼 제출 방지
+        }
+
+        return true; // 폼 제출 허용
+    }
+
+
+</script>
+
+{% endblock %}

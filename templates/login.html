@@ -1,0 +1,81 @@
+{% extends 'layout.html' %}
+
+
+{% block head %}
+<style>
+    #main_content{
+        background-color: yellow;
+        text-align: center;
+    }
+    #login_name{
+        text-align: center;
+        margin: 70px auto 40px;
+    }
+    #login_box{
+        background-color: #fff;
+        width: 40%;
+        height: 250px;
+        margin: 0px auto;
+        padding: 40px 20px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 7px 0px #9a9a9a;
+    }
+    #login_box form{
+        align-items: center;
+    }
+    #login_input {
+        margin: 20px auto;
+    }
+    #login_input input{
+        width: 90%;
+        height: 40px;
+        margin: 5px auto;
+        padding: 0px 5px;
+        text-align: left;
+        border: 0px;
+        border-bottom: 1px solid #9a9a9a;
+        font-size: 16px;
+    }
+    #login_submit{
+        margin: 0px auto;
+        padding: 20px 0px;
+    }
+    #login_submit button{
+        width: 90%;
+        height: 40px;
+        margin: 0px auto;
+        text-align: center;
+        border: 0px;
+        border-radius: 5px;
+        background-color: #033468;
+        color: #ffffff;
+        font-size: 16px;
+    }
+    #login_submit button:hover {
+        background-color: #02162c;
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div id="main_content">
+    <div id="login_name">
+        <h1>로그인</h1>
+    </div>
+    <div id="login_box">
+        <form action="{{ url_for('login') }}" method="post">
+            <div id="login_input">
+                <p><input name="user_id" type="text" placeholder="아이디"></p>
+                <p><input name="user_pw" type="password" placeholder="비밀번호"></p>
+            </div>
+            <div id="login_msg">
+                <p style="color: #000;">&nbsp; 로그인 실패</p>
+            </div>
+            <div id="login_submit">
+                <button type="submit"><strong>로그인</strong></button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
