@@ -4,7 +4,6 @@
 {% block head %}
 <style>
     #main_content{
-        background-color: yellow;
         text-align: center;
     }
     #login_name{
@@ -64,13 +63,13 @@
         <h1>로그인</h1>
     </div>
     <div id="login_box">
-        <form action="{{ url_for('login') }}" method="post">
+        <form action="{{ url_for('login') }}" method="post" onsubmit="return func_login_chk(event)">
             <div id="login_input">
-                <p><input name="user_id" type="text" placeholder="아이디"></p>
-                <p><input name="user_pw" type="password" placeholder="비밀번호"></p>
+                <p><input id="user_id" name="user_id" type="text" placeholder="아이디"></p>
+                <p><input id="user_pw" name="user_pw" type="password" placeholder="비밀번호"></p>
             </div>
-            <div id="login_msg">
-                <p style="color: #000;">&nbsp; 로그인 실패</p>
+            <div>
+                <p id="login_msg" style="font-size: 12px;"></p>
             </div>
             <div id="login_submit">
                 <button type="submit"><strong>로그인</strong></button>
@@ -78,4 +77,59 @@
         </form>
     </div>
 </div>
+
+<script>
+    function func_login_chk(event) {
+        event.preventDefault();
+
+        let user_id = document.getElementById('user_id').value;
+        let user_pw = document.getElementById('user_pw').value;
+        let login_msg = document.getElementById('login_msg');
+
+        // 아이디가 비어있지 않은지 확인
+        if (!user_id) {
+            let userIdInput = document.getElementById('user_id');
+            userIdInput.style.outline = '1px solid red';
+            login_msg.style.color = 'red';
+            login_msg.textContent = '아이디를 입력해주세요.';
+            return false;
+        } else {
+            document.getElementById('user_id').style.outline = ''; // 빨간 테두리 제거
+        }
+
+        if (!user_pw) {
+            let userPwInput = document.getElementById('user_pw');
+            userPwInput.style.outline = '1px solid red';
+            login_msg.style.color = 'red';
+            login_msg.textContent = '비밀번호를 입력해주세요.';
+            return false;
+        } else {
+            document.getElementById('user_pw').style.outline = ''; // 빨간 테두리 제거
+        }
+
+        // jQuery AJAX로 서버에 요청
+        $.ajax({
+            url: '/login_chk',
+            type: 'POST',
+            data: {
+                user_id: user_id,
+                user_pw: user_pw
+            }, 
+            success: function(response) {
+                console.log(response); // 서버 응답 확인
+                if (response.login_chk === 'success') {
+                    console.log('로그인 성공! 페이지 이동');
+                    window.location.href = '{{ url_for("home") }}';
+                } else {
+                    console.log('로그인 실패! 메시지 출력');
+                    login_msg.style.color = 'red';
+                    login_msg.textContent = response['login_msg'];
+                }
+            }
+        });
+        
+
+        
+    }
+</script>
 {% endblock %}

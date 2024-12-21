@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>week3-4 webpage</title>
     <link rel="stylesheet" href=" {{ url_for('static', filename='css/layout.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     {% block head %}{% endblock %}
 </head>
 
@@ -14,11 +15,14 @@
     <header>
         <div class="inner" id="header_content">
             <div id="header_left">
-                <h2 style="margin: 0px;font-size: 1.3em;">지식 조각</h2>
+                <a href="{{ url_for('home') }}"><strong>지식 조각</strong></a>
             </div>
             <div id="header_right">
-                <p><strong><a href="{{ url_for('login') }}">로그인 </a>&nbsp;|&nbsp;<a href="{{ url_for('join') }}"> 회원가입</a></strong></p>
-                <!-- <p><strong><a href="{{ url_for('post') }}">로그인 </a>&nbsp;|&nbsp;<a href="{{ url_for('post') }}"> 회원가입</a></strong></p> -->
+                {% if session['user_id'] %}
+                    <p><strong><a href="{{ url_for('logout') }}">로그아웃</a>&nbsp;|&nbsp;<a href="{{ url_for('my_page') }}">마이페이지</a></strong></p>
+                {% else %}
+                    <p><strong><a href="{{ url_for('login') }}">로그인</a>&nbsp;|&nbsp;<a href="{{ url_for('join') }}">회원가입</a></strong></p>
+                {% endif %}
             </div>
         </div>
     </header>

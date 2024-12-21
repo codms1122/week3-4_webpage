@@ -19,7 +19,10 @@ header {
     align-items: center;
     justify-content: space-between;
 }
-#header_left {
+#header_left a {
+    text-decoration: none;
+    margin: 0px;
+    font-size: 21px;
     color: #ffffff;
 }
 #header_right a, #header_right p {

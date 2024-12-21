@@ -72,7 +72,6 @@
         background-color: #02162c;
     }
 </style>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -174,6 +173,8 @@
             id_msg.textContent = "아이디 중복 확인이 필요합니다.";
             join_input_id.style.outline = "2px solid red";
             return false; // 폼 제출 방지
+        }else{
+            join_input_id.style.outline = ""
         }
 
         return true; // 폼 제출 허용

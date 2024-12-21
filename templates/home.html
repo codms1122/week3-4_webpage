@@ -1,0 +1,57 @@
+{% extends 'layout.html' %}
+
+
+{% block head %}
+<style>
+    #main_content{
+        width: 100%;
+        height: 240px;
+        margin-top: 50px;
+        text-align: center;
+        padding: 70px 0px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 7px 0px #9a9a9a;
+    }
+    #home_big_name{
+       /*  color: #000; */
+        font-size: 40px;
+        margin: 50px auto 0px;
+    }
+    #home_small_name{
+        margin-bottom: 30px;
+    }
+    #goto {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    button {
+        width: 170px;
+        height: 30px;
+        margin: 0px 5px;
+        border: 0px;
+        border-radius: 5px;
+        background-color: #033468;
+        color: #ffffff;
+    }
+    button:hover {
+        background-color: #02162c;
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div id="main_content">
+    <p id="home_big_name"><strong>지식 조각</strong></p>
+    <p id="home_small_name">여러분들의 지식을 공유해주세요</p>
+    <div id="goto">
+        <form id="post_home_btn" action="{{ url_for('post') }}">
+            <button type="submit">게시판 홈으로</button>
+        </form>
+        <form id="post_create_btn" action="{{ url_for('post_create') }}">
+            <button type="submit">글 작성</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
