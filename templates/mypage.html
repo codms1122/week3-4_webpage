@@ -1,0 +1,93 @@
+{% extends 'layout.html' %}
+
+
+{% block head %}
+<style>
+    #main_content {
+        text-align: center;
+    }
+    #mypage_name {
+        text-align: center;
+        margin: 70px auto 40px;
+    }
+    #mypage_box {
+        background-color: #fff;
+        width: 40%;
+        height: 400px;
+        margin: 0px auto;
+        padding: 20px 20px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 7px 0px #9a9a9a;
+    }
+    /* #join_box form {
+        align-items: center;
+    } */
+    #mypage_inner {
+        margin: 20px auto;
+    }
+    .mypage_inner_s {
+        width: 90%;
+        height: 30px;
+        margin: 3px auto;
+        padding: 10px 5px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        text-align: left;
+        border: 0px;
+        border-bottom: 1px solid #9a9a9a;
+        font-size: 18px;
+    }
+    #mypage_btn {
+        margin: 0px auto;
+        padding: 20px 0px;
+    }
+    #mypage_btn button {
+        width: 90%;
+        height: 40px;
+        margin: 0px auto;
+        text-align: center;
+        border: 0px;
+        border-radius: 5px;
+        background-color: #033468;
+        color: #ffffff;
+        font-size: 16px;
+    }
+    #mypage_btn button:hover {
+        background-color: #02162c;
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div id="main_content">
+    <div id="mypage_name">
+        <h1>내 프로필</h1>
+    </div>
+    <div id="mypage_box">
+        <div id="mypage_inner">
+            <div class="mypage_inner_s">
+                <p>아이디</p><p>{{ user['userId'] }}</p>
+            </div>
+            <div class="mypage_inner_s">
+                <p>이메일</p><p>{{ user['userEmail'] }}</p>
+            </div>
+            <div class="mypage_inner_s">
+                <p>이름</p><p>{{ user['userName'] }}</p>
+            </div>
+            <div class="mypage_inner_s">
+                <p>소속</p><p>{{ user['userOrgn'] }}</p>
+            </div>
+            <div class="mypage_inner_s">
+                <p>전공</p><p>{{ user['userMajor'] }}</p>
+            </div>
+        </div>
+        <form action="{{ url_for('mypage_update') }}" method="post">
+            <div id="mypage_btn">
+                <button type="submit" name="mypage_btn" value="submit"><strong>내 정보 수정</strong></button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

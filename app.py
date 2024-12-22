@@ -45,13 +45,13 @@ def post():
         #검색조건에 맞게 sql질의
         if query_content:    
             if query_type=="title":
-                sql = 'SELECT postId, postTitle, DATE(createdTime) AS createdTime FROM post WHERE postTitle LIKE "%' + query_content + '%"'
+                sql = 'SELECT postId, postTitle, DATE(createdTime) AS createdTime, postPw FROM post WHERE postTitle LIKE "%' + query_content + '%"'
             elif query_type=="content":
-                sql = 'SELECT postId, postTitle, DATE(createdTime) AS createdTime FROM post WHERE postContent LIKE "%' + query_content + '%"'
+                sql = 'SELECT postId, postTitle, DATE(createdTime) AS createdTime, postPw FROM post WHERE postContent LIKE "%' + query_content + '%"'
             else:
-                sql = 'SELECT postId, postTitle, DATE(createdTime) AS createdTime FROM post WHERE postTitle LIKE "%' + query_content + '%" or postContent LIKE "%' + query_content + '%"'
+                sql = 'SELECT postId, postTitle, DATE(createdTime) AS createdTime, postPw FROM post WHERE postTitle LIKE "%' + query_content + '%" or postContent LIKE "%' + query_content + '%"'
         else:
-            sql='select postId, postTitle, date(createdTime) AS createdTime from post'
+            sql='select postId, postTitle, date(createdTime) AS createdTime, postPw from post'
         
         #sql질의 결과 담기
         cursor.execute(sql)  
@@ -119,23 +119,30 @@ def post_create():
             user_id = session['user_id']
             create_title = request.form.get('create_title')
             create_content = request.form.get('create_content')
+            create_secret = request.form.get('create_secret')
+            print(create_secret)
             create_file = request.files.get('create_file')
             create_o_filename = "None" #original filename
             create_s_filename = "None" #saved filename
+            create_pw = "None"
             print(create_file)
 
             if create_title and create_content:
                 state = "create"
 
+                if create_secret == "on":
+                    create_pw = request.form.get('create_pw')
                 if create_file:
                     create_o_filename = create_file.filename
                     create_s_filename = datetime.now().strftime('%Y%m%d%H%M%S') + "_" + create_o_filename
                     print(create_file)
                     print(create_s_filename)
                     create_file.save(file_storage_folder + create_s_filename) 
+
                 sql = (
-                    'INSERT INTO post (userId, postTitle, postContent, sFilename, oFilename) '
-                    'VALUES ("' + user_id + '", "' + create_title + '", "' + create_content + '", "' + create_s_filename + '", "' + create_o_filename +'");'
+                    'INSERT INTO post (userId, postTitle, postContent, sFilename, oFilename, postPw) '
+                    'VALUES ("' + user_id + '", "' + create_title + '", "' + create_content + '", '
+                    '"' + create_s_filename + '", "' + create_o_filename +'", "' + create_pw +'");'
                 )
                 cursor.execute(sql)
                 connection.commit()
@@ -177,6 +184,7 @@ def post_update(post_id):
             if update_title and update_content:
                 state = "update"
                 sql=''
+                #파일이 새로 올라왔으면
                 if update_file:
                     #새 파일 저장
                     update_o_filename = update_file.filename
@@ -188,6 +196,7 @@ def post_update(post_id):
                         'sFilename = "' + update_s_filename + '", oFilename = "' + update_o_filename + '", lastModifiedTime = NOW() '
                         'WHERE postId = ' + str(post_id))
                 else:
+                    #아니라면 내용만 업데이트
                     sql = ('UPDATE post '
                         'SET postTitle = "'+ update_title +'", postContent = "'+ update_content +'", lastModifiedTime = NOW() '
                         'WHERE postId = ' + str(post_id))
@@ -247,7 +256,7 @@ def post_delete(post_id):
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if session:
-        return redirect(url_for('my_page'))
+        return redirect(url_for('mypage'))
     return render_template('login.html')
 
 
@@ -282,12 +291,71 @@ def login_chk():
 
 
 
-@app.route('/my_page') #, methods=['GET', 'POST'])
-def my_page():
+@app.route('/mypage') #, methods=['GET', 'POST'])
+def mypage():
     if session:
-        return render_template('my_page.html')
+        user_id = session['user_id']
+        #DB연결
+        connection = get_db_connection()
+        cursor = connection.cursor(dictionary=True)
+
+        sql = (
+            'SELECT * FROM user WHERE userId = "' + user_id + '"'
+        )
+        cursor.execute(sql)
+        sql_select = cursor.fetchone()
+
+        return render_template('mypage.html', user=sql_select)
     else:
         return redirect(url_for('login'))
+    
+
+@app.route('/mypage_update', methods=['GET', 'POST'])
+def mypage_update():
+    if session:
+        user_id = session['user_id']
+        #DB연결
+        connection = get_db_connection()
+        cursor = connection.cursor(dictionary=True)
+
+        sql = (
+            'SELECT * FROM user WHERE userId = "' + user_id + '"'
+        )
+        cursor.execute(sql)
+        sql_select = cursor.fetchone()
+
+        btn_action = request.form.get('btn_action')
+        if btn_action == "submit":
+            state="user_update"
+            user_email = request.form.get('user_email')
+            user_name = request.form.get('user_name')
+            user_orgn = request.form.get('user_orgn')
+            user_major = request.form.get('user_major')
+            is_pw_change = request.form.get('is_pw_change')
+            if is_pw_change == "on":
+                user_pw = request.form.get('user_pw')
+                sql=('UPDATE user '
+                    'SET userEmail = "'+ user_email +'", userName = "'+ user_name +'", '
+                    'userOrgn = "' + user_orgn + '", userMajor = "' + user_major + '", '
+                    'userPw = "' + user_pw + '", lastModifiedTime = NOW() '
+                    'WHERE userId = "' + str(user_id) + '"'
+                )
+            else:
+                sql=('UPDATE user '
+                    'SET userEmail = "'+ user_email +'", userName = "'+ user_name +'", '
+                    'userOrgn = "' + user_orgn + '", userMajor = "' + user_major + '", '
+                    'lastModifiedTime = NOW() '
+                    'WHERE userId = "' + str(user_id) + '"'
+                )
+            cursor.execute(sql)
+            connection.commit()
+            return render_template('next.html',state=state)
+
+        return render_template('mypage_update.html', user=sql_select)
+    else:
+        return redirect(url_for('login'))
+
+
 
 
 

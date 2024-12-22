@@ -40,11 +40,23 @@
     {% if state == "join" %}
     <p class="next_msg">회원가입이 완료되었습니다</p>
     <div id="goto">
-        <form id="user_join_btn" action="{{ url_for('post') }}">
-            <button type="submit">게시판 홈으로</button>
+        <form id="user_join_btn" action="{{ url_for('home') }}">
+            <button type="submit">홈으로</button>
         </form>
         <form id="user_join_btn" action="{{ url_for('login') }}">
             <button type="submit">로그인</button>
+        </form>
+    </div>
+    {% endif %}
+
+    {% if state == "user_update" %}
+    <p class="next_msg">내 정보 수정이 완료되었습니다</p>
+    <div id="goto">
+        <form id="post_update_btn" action="{{ url_for('home') }}">
+            <button type="submit">홈으로</button>
+        </form>
+        <form id="post_update_btn" action="{{ url_for('mypage') }}">
+            <button type="submit">마이페이지로</button>
         </form>
     </div>
     {% endif %}
@@ -86,7 +98,7 @@
     <p class="next_msg">정말 삭제하시겠습니까?</p>
     <div id="goto">
         <form id="post_deleteN_btn" action="{{ url_for('post') }}">
-            <button type="submit">아니요 (홈으로)</button>
+            <button type="submit">아니요 (게시판 홈으로)</button>
         </form>
         <form id="post_deleteY_btn" action="{{ url_for('post_delete', post_id=post_id) }}" method="post">
             <button type="submit" name="delete_yn" value="yes">예</button>

@@ -94,6 +94,8 @@
                 <p style="margin: 0px; font-size: 28px;"><strong>글쓰기</strong></p>
             </div>
             <div id="create_publish_btn">
+                <input type="checkbox" id="is_create_secret" name="create_secret"> 비밀글
+                <input type="password" id="create_pw" name="create_pw" placeholder="비밀번호" maxlength="20" style="height: 26px;">
                 <button type="submit">발행하기</button>
             </div>
         </div>
@@ -113,4 +115,30 @@
     {% endif %}
 
 </div>
+
+<script>
+    let create_pw = document.getElementById('create_pw')
+    create_pw.disabled = true
+    // 비밀글 체크 여부에 따라 비번창 활성화
+    document.getElementById('is_create_secret').addEventListener('change', function() {
+        if (this.checked) {
+            create_pw.disabled = false; // 비번창 활성화
+        } else {
+            create_pw.disabled = true; // 비번창 비활성화
+            create_pw.value = ''; // 비번값 초기화
+        }
+    });
+
+    // 폼 제출 전 비번 입력값 확인
+    document.getElementById('create_form').addEventListener('submit', function(event) {
+        if (is_create_secret.checked && create_pw.value === '') {
+            alert("비밀글 비밀번호를 입력하세요.");
+            //create_pw.focus();
+            create_pw.style.outline = "2px solid red";
+            event.preventDefault(); // 폼 제출 중단
+        }else{
+            create_pw.style.outline = "";
+        }
+    });
+</script>
 {% endblock %}
