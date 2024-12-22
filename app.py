@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, redirect, jsonify, session, url_for
+from flask import Flask, render_template, request, redirect, jsonify, session, url_for, send_file
+from datetime import datetime
 import mysql.connector
 from config import Config #DB 정보 저장된 파일일
 
@@ -10,6 +11,9 @@ app.config.from_object(Config)
 
 #세션 시크릿 키 
 app.secret_key = app.config['SESSION_KEY']
+
+#파일 저장 폴더
+file_storage_folder = app.config['FILE_STORAGE_FOLDER']
 
 #DB연결 함수
 def get_db_connection():
@@ -73,7 +77,7 @@ def post_detail(post_id):
         connection = get_db_connection()
         cursor = connection.cursor(dictionary=True)
 
-        sql = ('SELECT postId, postTitle, postContent, createdTime, lastModifiedTime '
+        sql = ('SELECT postId, userId, postTitle, postContent, sFilename, oFilename, createdTime, lastModifiedTime '
             'FROM post WHERE postId = ' + str(post_id))
         cursor.execute(sql)  
         sql_select = cursor.fetchall()
@@ -86,27 +90,56 @@ def post_detail(post_id):
 
 
 
+@app.route('/download/<int:post_id>') #, methods=['POST'])
+def download(post_id):
+    #DB연결
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    sql = ('SELECT postId, sFilename, oFilename '
+        'FROM post WHERE postId = ' + str(post_id))
+    cursor.execute(sql)  
+    sql_select = cursor.fetchone()
+    
+    return send_file(file_storage_folder + sql_select['sFilename'],
+                    download_name = sql_select['oFilename'],
+                    as_attachment=True)
+
+
+
 @app.route('/post/create', methods=['GET', 'POST'])
 def post_create():
     if session:
         #DB연결
         connection = get_db_connection()
         cursor = connection.cursor(dictionary=True)
-
-        # 작성 글 내용 받아오기
-        create_title = request.form.get('create_title')
-        create_content = request.form.get('create_content')
-        user_id = session['user_id']
-
+        
         if request.method == 'POST':
+            # 작성 글 내용 받아오기
+            user_id = session['user_id']
+            create_title = request.form.get('create_title')
+            create_content = request.form.get('create_content')
+            create_file = request.files.get('create_file')
+            create_o_filename = "None" #original filename
+            create_s_filename = "None" #saved filename
+            print(create_file)
+
             if create_title and create_content:
                 state = "create"
+
+                if create_file:
+                    create_o_filename = create_file.filename
+                    create_s_filename = datetime.now().strftime('%Y%m%d%H%M%S') + "_" + create_o_filename
+                    print(create_file)
+                    print(create_s_filename)
+                    create_file.save(file_storage_folder + create_s_filename) 
                 sql = (
-                    'INSERT INTO post (userId, postTitle, postContent) '
-                    'VALUES ("' + user_id + '", "' + create_title + '", "' + create_content + '");'
+                    'INSERT INTO post (userId, postTitle, postContent, sFilename, oFilename) '
+                    'VALUES ("' + user_id + '", "' + create_title + '", "' + create_content + '", "' + create_s_filename + '", "' + create_o_filename +'");'
                 )
                 cursor.execute(sql)
                 connection.commit()
+
                 return render_template('next.html',state=state)
             else:
                 errormsg="emptyFound"
@@ -131,22 +164,36 @@ def post_update(post_id):
         connection = get_db_connection()
         cursor = connection.cursor(dictionary=True)
 
-        sql = ('SELECT postId, postTitle, postContent, createdTime, lastModifiedTime '
+        sql = ('SELECT postId, postTitle, postContent, sFilename, oFilename, createdTime, lastModifiedTime '
             'FROM post WHERE postId = ' + str(post_id))
         cursor.execute(sql)  
         sql_select = cursor.fetchall()
         sql_select = sql_select[0]
 
-        update_title = request.form.get('update_title')
-        update_content = request.form.get('update_content')
-
         if request.method == 'POST':
+            update_title = request.form.get('update_title')
+            update_content = request.form.get('update_content')
+            update_file = request.files.get('update_file')
             if update_title and update_content:
                 state = "update"
-                sql = ('UPDATE post '
-                    'SET postTitle = "'+ update_title +'", postContent = "'+ update_content +'", lastModifiedTime = NOW() '
-                    'WHERE postId = ' + str(post_id))
+                sql=''
+                if update_file:
+                    #새 파일 저장
+                    update_o_filename = update_file.filename
+                    update_s_filename = datetime.now().strftime('%Y%m%d%H%M%S') + "_" + update_o_filename
+                    update_file.save(file_storage_folder + update_s_filename) 
+
+                    sql=('UPDATE post '
+                        'SET postTitle = "'+ update_title +'", postContent = "'+ update_content +'", '
+                        'sFilename = "' + update_s_filename + '", oFilename = "' + update_o_filename + '", lastModifiedTime = NOW() '
+                        'WHERE postId = ' + str(post_id))
+                else:
+                    sql = ('UPDATE post '
+                        'SET postTitle = "'+ update_title +'", postContent = "'+ update_content +'", lastModifiedTime = NOW() '
+                        'WHERE postId = ' + str(post_id))
+                    
                 cursor.execute(sql)
+                print(sql)
                 connection.commit()
                 return render_template('next.html',state=state)
             else:

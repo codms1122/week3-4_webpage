@@ -37,7 +37,7 @@
         width: 98%;
         margin: 10px;
     }
-    #update_write_box input {
+    #update_write_box #update_title {
         display: block;
         width: 98%;
         height: 50px;
@@ -45,6 +45,11 @@
         margin: 0px auto;
         padding: 5px 10px;
         font-size: 22px;
+    }
+    #update_write_box #update_fileupload{
+        height: 30px;
+        padding: 10px 10px;
+        font-size: 16px;
     }
     #update_write_box hr {
         border: 1px solid #eff1f3;
@@ -84,7 +89,7 @@
         <a href="{{ url_for('post') }}">지식조각 게시판</a>
     </div>
 
-    <form action="{{ url_for('post_update', post_id=post['postId']) }}" method="post" id="update_form">
+    <form action="{{ url_for('post_update', post_id=post['postId']) }}" method="post" id="update_form" enctype="multipart/form-data">
         <div id="update_nnp">
             <div id="update_name">
                 <p style="margin: 0px; font-size: 28px;"><strong>글 수정하기</strong></p>
@@ -96,6 +101,11 @@
         <div id="update_write">
             <div id="update_write_box">
                 <input id="update_title" name="update_title" type="text" placeholder="제목을 입력하세요" value="{{post['postTitle']}}" required>
+                <hr>
+                {% if post['oFilename'] != "None" %}
+                <p style="margin: 0px; padding: 5px 10px;">기존 첨부파일 : <a href="{{ url_for('download', post_id=post['postId']) }}">{{post['oFilename']}}</a> </p>
+                {% endif %}
+                <input id="update_fileupload" name="update_file" type="file">
                 <hr>
                 <textarea id="update_content" name="update_content" placeholder="내용을 입력하세요" required>{{post['postContent']}}</textarea>
             </div>

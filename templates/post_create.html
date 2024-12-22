@@ -37,7 +37,7 @@
         width: 98%;
         margin: 10px;
     }
-    #create_write_box input {
+    #create_write_box #create_title {
         display: block;
         width: 98%;
         height: 50px;
@@ -46,13 +46,18 @@
         padding: 5px 10px;
         font-size: 22px;
     }
+    #create_write_box #create_fileupload{
+        height: 30px;
+        padding: 10px 10px;
+        font-size: 16px;
+    }
     #create_write_box hr {
         border: 1px solid #eff1f3;
     }
     #create_write_box textarea {
         display: block;
         width: 98%;
-        height: 700px;
+        height: 650px;
         border: 0px;
         margin: 0px auto;
         padding: 10px;
@@ -83,7 +88,7 @@
         <a href="{{ url_for('post') }}">지식조각 게시판</a>
     </div>
 
-    <form action="{{ url_for('post_create') }}" method="post" id="create_form">
+    <form action="{{ url_for('post_create') }}" method="post" id="create_form" enctype="multipart/form-data">
         <div id="create_nnp">
             <div id="create_name">
                 <p style="margin: 0px; font-size: 28px;"><strong>글쓰기</strong></p>
@@ -95,6 +100,8 @@
         <div id="create_write">
             <div id="create_write_box">
                 <input id="create_title" name="create_title" type="text" placeholder="제목을 입력하세요" required>
+                <hr>
+                <input id="create_fileupload" name="create_file" type="file">
                 <hr>
                 <textarea id="create_content" name="create_content" placeholder="내용을 입력하세요"  required></textarea>
             </div>

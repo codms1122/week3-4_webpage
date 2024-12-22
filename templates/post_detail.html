@@ -75,8 +75,14 @@
     </div>
     <div id="detail_content">
         <p style="font-size: 12px; color: #6a6b6b;">
-            작성일시 : {{post['createdTime']}}  |  수정일시 : {{post['lastModifiedTime']}}
+            작성자 : {{post['userId']}} &nbsp;|&nbsp; 작성일시 : {{post['createdTime']}} &nbsp;|&nbsp; 수정일시 : {{post['lastModifiedTime']}}
         </p>
+        <hr>
+        {% if post['oFilename'] != "None" %}
+        <p>첨부파일 다운로드 : <a href="{{ url_for('download', post_id=post['postId']) }}">{{post['oFilename']}}</a> </p>
+        {% else %}
+        <p>첨부파일이 없습니다.</p>
+        {% endif %}
         <hr>
         <p>{{post['postContent']}}</p>
     </div>
